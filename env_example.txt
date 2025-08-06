@@ -1,0 +1,23 @@
+# OpenAI配置
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_TEMPERATURE=0.1
+
+# 交易所配置（可选）
+EXCHANGE_NAME=binance
+EXCHANGE_API_KEY=your_exchange_api_key_here
+EXCHANGE_SECRET=your_exchange_secret_here
+
+# 数据API配置（可选）
+COINGECKO_API_KEY=your_coingecko_api_key_here
+CRYPTOPANIC_API_KEY=your_cryptopanic_api_key_here
+TWITTER_API_KEY=your_twitter_api_key_here
+TWITTER_API_SECRET=your_twitter_api_secret_here
+
+# 输出配置
+OUTPUT_DIR=output
+LOG_LEVEL=INFO
+
+# 分析配置
+DEFAULT_TIMEFRAME=1h
+DEFAULT_LIMIT=100 
