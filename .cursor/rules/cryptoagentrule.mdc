@@ -1,0 +1,138 @@
+---
+alwaysApply: true
+---
+
+# CursorRules for AI_Crypto_MultiAgent Project
+
+## 1. 开发前必须阅读的文档
+
+每次生成或修改代码时，Cursor **必须首先参考以下三份文档**：
+
+1. **PRD**：`AI_Crypto_MultiAgent_PRD.md`  
+   - 描述产品目标、功能需求、输出规范与开发优先级
+
+2. **架构文档**：`AI_Crypto_MultiAgent_Architecture.md`  
+   - 描述项目整体文件结构、智能体划分与依赖关系
+
+3. **独立测试设计文档**：`AI_Crypto_MultiAgent_Design_Testable.md`  
+   - 说明每个智能体必须可独立运行测试，提供执行流程与输出示例
+
+> **要求**：  
+> - 在生成代码前，Cursor 需检查生成内容是否符合上述三份文档要求  
+> - 如果生成逻辑或文件结构偏离文档，需主动修正或提示用户
+
+---
+
+## 2. 智能体开发规范
+
+1. **文件位置与命名规则**
+   - 所有智能体文件放在 `agents/` 下的对应子文件夹：
+     ```
+     agents/
+       analysts/
+       researchers/
+       trader/
+       risk_management/
+       managers/
+     ```
+   - 文件名需与角色对应，如：
+     ```
+     agents/researchers/bull_researcher.py
+     agents/risk_management/crypto_risky_debator.py
+     ```
+
+2. **类与方法定义**
+   - 每个智能体必须提供一个创建函数：
+     ```python
+     def create_xxx(llm, memory=None):
+         ...
+         return xxx_node
+     ```
+   - 每个智能体核心处理方法：
+     ```python
+     def xxx_node(state) -> dict:
+         ...
+         return updated_state
+     ```
+   - 必须使用 `AgentState` 或字典在智能体之间传递状态
+
+3. **独立测试要求**
+   - 每个智能体文件必须包含：
+     ```python
+     if __name__ == "__main__":
+         # 独立测试逻辑
+         # 输入示例 symbol / coin_name 并输出分析结果
+     ```
+   - 运行：
+     ```bash
+     python agents/analysts/crypto_market_analyst.py
+     ```
+   - 直接打印分析结果或存储到 `output/results.json`
+
+4. **输出结构规范**
+   - 所有分析结果写入 `state.analysis_reports` 或对应字段，如：
+     ```python
+     state.analysis_reports["technical"] = {...}
+     state.analysis_reports["news"] = {...}
+     state.analysis_reports["social"] = {...}
+     state.analysis_reports["fundamental"] = {...}
+     ```
+   - 投资与交易决策统一写入：
+     ```python
+     state["investment_plan"] = full_text
+     state["trader_investment_plan"] = decision_text
+     ```
+
+---
+
+## 3. 开发逻辑与流程
+
+1. **遵循模块化迭代**
+   - 先完成分析师（Analysts）
+   - 再开发研究员（Researchers）与辩论逻辑
+   - 然后开发交易员（Trader）
+   - 最后开发风险管理（Risk Management）与管理层（Managers）
+
+2. **Prompt 参考**
+   - 智能体的 Prompt 分别存放在对于的agent团队文件夹内：
+   - 开发智能体时，必须参考对应 Prompt 文件并保持逻辑一致
+   - 禁止随意更改决策逻辑或字段名称
+
+3. **输出 JSON 规范**
+   - 最终输出统一保存在：
+     ```
+     output/results.json
+     ```
+   - 示例：
+     ```json
+     {
+       "symbol": "BTC/USDT",
+       "trend": "bullish",
+       "entry_price": 61850,
+       "stop_loss": 60900,
+       "take_profit": 63500,
+       "risk_level": "medium",
+       "analysis_summary": {
+         "fundamental": "...",
+         "technical": "...",
+         "news": "...",
+         "social": "..."
+       }
+     }
+     ```
+
+---
+
+## 4. Cursor 生成代码时的强制规则
+
+1. **生成前检查**
+   - 是否符合三份文档（PRD、架构、独立测试）
+   - 是否使用了正确的文件路径和命名规则
+   - 是否包含独立测试入口
+
+2. **生成逻辑必须遵循**
+   - 模块化、可测试、状态字典传递
+   - 输出必须包含必需字段，不允许返回空内容或模糊描述
+
+3. **生成后行为**
+   - 如检测到文件结构或逻辑与文档不符，Cursor 必须自动修正或提醒用户
